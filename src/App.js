@@ -50,7 +50,7 @@ function App() {
     setIsLoading(true);
     const tenYearsAgo = new Date().getFullYear() - 10;
     try {
-      const response = await axios.get("https://musicbrainz.org/ws/2/artist", {
+      const response = await axios.get(process.env.REACT_APP_MUSIC_API, {
         params: {
           query: `${city}`,
           fmt: "json",
