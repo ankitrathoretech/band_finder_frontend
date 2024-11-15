@@ -52,7 +52,7 @@ function App() {
     try {
       const response = await axios.get(process.env.REACT_APP_MUSIC_API, {
         params: {
-          query: `${city}`,
+          location: `${city}`,
           fmt: "json",
           limit: limit,
           offset: page,
