@@ -17,8 +17,8 @@ import {
 import BandItem from "./BandItem";
 import LoadingComponent from "./LoadingComponent";
 
-function BandList({ bandData, isLoading, onSearch, city }) {
-  const [page, setPage] = useState(1);
+function BandList({ bandData, isLoading, onSearch, city, bandCount }) {
+  const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
   const handleNextPage = () => {
     setPage((prev) => prev + 1);
@@ -26,15 +26,15 @@ function BandList({ bandData, isLoading, onSearch, city }) {
   };
 
   const handlePrevPage = () => {
-    if (page > 1) {
+    if (page >= 0) {
       setPage((prev) => prev - 1);
       onSearch(city, page - 1, limit);
     }
   };
 
-  const totalPages = Math.ceil(bandData?.length / limit);
-  const isNextPageDisabled =
-    page >= totalPages || bandData?.length < page * limit;
+  const totalPages = Math.ceil(bandCount / limit);
+  const isNextPageDisabled = page >= totalPages - 1;
+  const isPrevPageDisabled = page <= 0;
 
   return (
     <TableContainer>
@@ -83,7 +83,7 @@ function BandList({ bandData, isLoading, onSearch, city }) {
               <Button
                 variant="contained"
                 onClick={handlePrevPage}
-                disabled={page <= 1}
+                disabled={isPrevPageDisabled}
                 sx={{
                   backgroundColor: "#4CAF50",
                   color: "white",
@@ -92,7 +92,7 @@ function BandList({ bandData, isLoading, onSearch, city }) {
               >
                 Previous
               </Button>
-              <Typography variant="body1">Page: {page}</Typography>
+              <Typography variant="body1">Page: {page + 1}</Typography>
               <Button
                 disabled={isNextPageDisabled}
                 variant="contained"
@@ -115,7 +115,10 @@ function BandList({ bandData, isLoading, onSearch, city }) {
                 <InputLabel>Results per page</InputLabel>
                 <Select
                   value={limit}
-                  onChange={(e) => setLimit(Number(e.target.value))}
+                  onChange={(e) => {
+                    onSearch(city, page, Number(e.target.value));
+                    setLimit(Number(e.target.value));
+                  }}
                   label="Results per page"
                 >
                   <MenuItem value={10}>10</MenuItem>

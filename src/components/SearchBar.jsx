@@ -3,7 +3,7 @@ import React from "react";
 const SearchBar = ({ onSearch, city, setCity }) => {
   const handleSearch = () => {
     if (city.trim()) {
-      onSearch(city, 1, 10);
+      onSearch(city, 0, 10);
     }
   };
 

@@ -8,6 +8,7 @@ function App() {
   const [bands, setBands] = useState([]);
   const [city, setCity] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [bandCount, setBandCount] = useState(0);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -16,11 +17,11 @@ function App() {
           position.coords.latitude,
           position.coords.longitude
         );
-        searchBands(city, 1, 10);
+        searchBands(city, 0, 10);
       },
       async () => {
         const response = await axios.get(process.env.REACT_APP_GEO_API);
-        searchBands(response.data.city, 1, 10);
+        searchBands(response.data.city, 0, 10);
       }
     );
   }, []);
@@ -46,7 +47,7 @@ function App() {
     }
   };
 
-  const searchBands = async (city, page = 1, limit = 10) => {
+  const searchBands = async (city, page = 0, limit = 10) => {
     setIsLoading(true);
     const tenYearsAgo = new Date().getFullYear() - 10;
     try {
@@ -58,14 +59,8 @@ function App() {
           offset: page,
         },
       });
-      console.log("response", response);
-      const bands = response.data.artists
-        .filter((band) => {
-          const yearFounded = parseInt(band["life-span"]?.begin);
-          return yearFounded >= tenYearsAgo;
-        })
-        .slice(0, 50);
-      setBands(bands);
+      setBandCount(response.data.count);
+      setBands(response.data.artists);
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -78,6 +73,7 @@ function App() {
       <div className="conttainer">
         <SearchBar onSearch={searchBands} city={city} setCity={setCity} />
         <BandList
+          bandCount={bandCount}
           bandData={bands}
           isLoading={isLoading}
           onSearch={searchBands}
