@@ -54,8 +54,8 @@ function App() {
         params: {
           query: `${city}`,
           fmt: "json",
-          // limit: limit,
-          // offset: page,
+          limit: limit,
+          offset: page,
         },
       });
       console.log("response", response);
